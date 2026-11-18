@@ -1,0 +1,12 @@
+:root{--jangmi-paper:#f1f0ec}
+body.skin-jangmi{font-family:"Noto Sans KR",sans-serif}
+body.skin-jangmi .brand{font-family:Manrope,Arial,sans-serif;letter-spacing:.18em}
+.section-portfolio-book{background:var(--jangmi-paper,var(--surface));border-top:1px solid var(--line)}
+.portfolio-book-actions{display:flex;justify-content:flex-end;margin:-2.8rem 0 1.2rem}
+.portfolio-page-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(.75rem,2vw,1.5rem);align-items:start}
+.portfolio-book-page{margin:0;position:relative;background:rgba(255,255,255,.42);border:1px solid var(--line);overflow:hidden}
+.portfolio-book-page img{display:block;width:100%;height:auto;object-fit:contain;transition:transform .45s ease}
+.portfolio-book-page:hover img{transform:scale(1.008)}
+.portfolio-book-page figcaption{position:absolute;right:.75rem;bottom:.65rem;padding:.28rem .48rem;background:rgba(20,20,18,.78);color:#fff;font-size:.58rem;letter-spacing:.12em}
+@media(max-width:960px){.portfolio-page-grid{grid-template-columns:1fr;gap:.65rem}.portfolio-book-actions{justify-content:flex-start;margin:.1rem 0 .75rem}.portfolio-book-page figcaption{right:.45rem;bottom:.45rem;font-size:.52rem}.section-portfolio-book{padding-top:1.25rem;padding-bottom:1.25rem}}
+@media print{.portfolio-page-grid{grid-template-columns:1fr 1fr}.portfolio-book-page{break-inside:avoid}}

@@ -1,0 +1,16 @@
+{
+  "items": [
+    {
+      "id": "resume-main",
+      "type": "resume",
+      "title": "Architecture Portfolio 2025",
+      "slug": "main",
+      "description": "홍익대학교 건축학부 장미 포트폴리오 PDF",
+      "pdfUrl": "./assets/docs/jangmi-architecture-portfolio-2025.pdf",
+      "sections": [],
+      "order": 0,
+      "visibility": "public"
+    }
+  ],
+  "meta": { "updatedAt": "2026-11-18T00:00:00.000Z" }
+}
