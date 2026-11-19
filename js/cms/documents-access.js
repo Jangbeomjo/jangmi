@@ -83,6 +83,7 @@ const DocumentAccess = (() => {
 
     return {
       ...doc,
+      name: doc.name || doc.title || "",
       category,
       classification,
       storage,

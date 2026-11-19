@@ -120,6 +120,10 @@ window.__PORTFOLIO_RAW__ = {
                                      "href":  "#awards"
                                  },
                                  {
+                                     "label":  "PORTFOLIO",
+                                     "href":  "#portfolio-book"
+                                 },
+                                 {
                                      "label":  "WORKS",
                                      "href":  "#projects"
                                  },

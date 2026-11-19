@@ -39,7 +39,6 @@ const EditorUI = (() => {
         <button type="button" class="editor-toolbar__btn editor-toolbar__btn--desktop-only" id="editorRedoBtn" title="Ctrl+Y" disabled>↷</button>
         <button type="button" class="editor-toolbar__btn" id="editorPreviewBtn" title="Draft 미리보기">미리보기</button>
         <button type="button" class="editor-toolbar__btn" id="editorSeoBtn" title="SEO">SEO</button>
-        <button type="button" class="editor-toolbar__btn" id="editorThemeBtn" title="테마">테마</button>
         <button type="button" class="editor-toolbar__btn editor-toolbar__btn--desktop-only" id="editorGithubBtn" title="GitHub">GitHub</button>
         <button type="button" class="editor-toolbar__btn editor-toolbar__btn--desktop-only" id="editorBackupBtn" title="백업">백업</button>
         <button type="button" class="editor-toolbar__btn editor-toolbar__btn--ghost" id="editorClearDraftBtn" title="Draft 삭제">Draft 삭제</button>
@@ -57,7 +56,6 @@ const EditorUI = (() => {
     bindOnce("editorRedoBtn", () => handlers.redo?.());
     bindOnce("editorPreviewBtn", () => handlers.preview?.());
     bindOnce("editorSeoBtn", () => handlers.seo?.());
-    bindOnce("editorThemeBtn", () => handlers.theme?.());
     bindOnce("editorGithubBtn", () => handlers.github?.());
     bindOnce("editorBackupBtn", () => handlers.backup?.());
     bindOnce("editorClearDraftBtn", () => handlers.clearDraft?.());

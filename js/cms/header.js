@@ -32,7 +32,6 @@ const CMSHeader = (() => {
     }
 
     container.innerHTML = actionHtml;
-    ThemeSwitcher?.render?.(container);
 
     bind();
     updateBrandLogo(profile);
@@ -80,7 +79,7 @@ const CMSHeader = (() => {
     const session = EditorAuth?.getSession?.() || null;
 
     const onSubPage = /\/pages\//.test(location.pathname) || /\\pages\\/.test(location.pathname);
-    if (onSubPage && profile.name) {
+    if (onSubPage && profile.name && !document.body.classList.contains("page-documents")) {
       brand.textContent = `← ${profile.name}`;
     }
 

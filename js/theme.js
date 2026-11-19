@@ -676,7 +676,7 @@ const ThemeSwitcher = (() => {
 
   function initFromStore() {
     const base = window.PortfolioStore?.get?.()?.theme;
-    if (base) applyTheme(mergeThemeWithVisitorChoice(base));
+    if (base) applyTheme(base);
   }
 
   return { render, syncUI, selectPreset, initFromStore, close: closePanel };

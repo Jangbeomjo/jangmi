@@ -52,6 +52,7 @@
     { "label": "SOFTWARE", "href": "#skills" },
     { "label": "ENGAGEMENT", "href": "#activities" },
     { "label": "AWARDS", "href": "#awards" },
+    { "label": "PORTFOLIO", "href": "#portfolio-book" },
     { "label": "WORKS", "href": "#projects" },
     { "label": "CONTACT", "href": "#contact" },
     { "label": "ALL WORKS", "href": "./pages/projects.html" },

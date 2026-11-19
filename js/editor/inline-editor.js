@@ -455,6 +455,7 @@ const InlineEditor = (() => {
     const controls = card.querySelector(".project-card__controls");
     if (!controls) return;
     controls.innerHTML = `
+      ${isJangMiSkin() ? `<button type="button" class="edit-ctrl-btn" data-project-detail-open="${esc(card.dataset.editId)}" title="상세 편집" aria-label="상세 편집">↗</button>` : ""}
       <button type="button" class="edit-ctrl-btn" data-action="featured" title="대표">★</button>
       <button type="button" class="edit-ctrl-btn" data-action="visibility" title="공개">🔒</button>
       <button type="button" class="edit-ctrl-btn" data-action="status" title="상태">◉</button>
@@ -612,18 +613,20 @@ const InlineEditor = (() => {
   // ─── 리스트 추가 버튼 ───────────────────────────────────────
 
   function injectListControls() {
-    injectAddBtn("projectGrid", projectAddLabel(), addProject);
+    injectAddBtn("projectGrid", isJangMiSkin() ? "프로젝트 추가" : projectAddLabel(), addProject);
     injectAddBtn("projectsPageGrid", projectAddLabel(), addProject);
     injectAddBtn("skillBars", "스킬 추가", addSkill);
     injectAddBtn("eduTimeline", "학력 추가", () => addListItem("education"));
     injectAddBtn("eduCompact", "학력 추가", () => addListItem("education"));
     injectAddBtn("coreStackLines", "스택 추가", addStackLine);
     injectAddBtn("activityGrid", "활동 추가", () => addListItem("experience", "activity"));
+    injectAddBtn("profileActivityGrid", "활동 추가", () => addListItem("experience", "activity"));
     injectAddBtn("careerCompact", "경력 추가", () => addListItem("experience", "career"));
     injectAddBtn("careerTimeline", "경력 추가", () => addListItem("experience", "career"));
     injectAddBtn("trainingGrid", "교육/활동 추가", addTraining);
     injectAddBtn("certList", "자격증 추가", addCertificate);
     injectAddBtn("awardList", "수상 추가", addAward);
+    injectAddBtn("profileAwardList", "수상 추가", addAward);
     const addIntroLine = () => addProfileLine("introLines");
     injectAddBtn("heroIntroLines", "소개 라인 추가", addIntroLine);
     injectAddBtn("aboutIntroLines", "소개 라인 추가", addIntroLine);
@@ -673,7 +676,7 @@ const InlineEditor = (() => {
     const path = await CMS.uploadImageWithFallback(file);
     const p = PortfolioStore.findItem("projects", projectId);
     if (p) {
-      p.screenshots = p.screenshots || p.images || [];
+      p.screenshots = p.screenshots?.length ? p.screenshots : (p.images || []);
       p.screenshots.push(path);
       PortfolioStore.notifyChange();
     }
@@ -715,8 +718,9 @@ const InlineEditor = (() => {
 
   function addProject() {
     const id = EditorGitHub.generateId("proj");
+    const isHighlightsPage = Boolean(document.getElementById("projectsPageGrid"));
     PortfolioStore.addItem("projects", {
-      id, title: isJangMiSkin() ? "새 경험" : "새 프로젝트", period: "", type: "", role: "", desc: "",
+      id, title: isJangMiSkin() && isHighlightsPage ? "새 경험" : "새 프로젝트", period: "", type: "", role: "", desc: "",
       tags: [], href: "", github: "", deployUrl: "", youtube: "", thumb: "", thumbnail: "",
       screenshots: [], images: [], pdf: "", videoUrl: "", hidden: false, featured: false,
       visibility: "public", status: "completed", teamSize: "",
@@ -840,7 +844,7 @@ const InlineEditor = (() => {
       const id = list.dataset.editId;
       const project = PortfolioStore.findItem("projects", id);
       if (!project) return;
-      const shots = project.screenshots || project.images || [];
+      const shots = project.screenshots?.length ? project.screenshots : (project.images || []);
       const idx = parseInt(screenshotIndex, 10);
       if (idx >= 0 && idx < shots.length) {
         shots.splice(idx, 1);
@@ -882,7 +886,7 @@ const InlineEditor = (() => {
         const id = list.dataset.editId;
         const project = PortfolioStore.findItem("projects", id);
         if (project) {
-          const shots = project.screenshots || project.images || [];
+          const shots = project.screenshots?.length ? project.screenshots : (project.images || []);
           const idx = parseInt(screenshotIndex, 10);
           if (idx >= 0 && idx < shots.length) {
             shots[idx] = path;

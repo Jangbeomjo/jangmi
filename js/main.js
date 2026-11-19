@@ -79,7 +79,7 @@ window.renderPortfolio = function renderPortfolio(sections) {
 
     if (set.has("seo") || all) applySeo(seo, profile);
     if (set.has("theme") || all) {
-      applyTheme(mergeThemeWithVisitorChoice(theme));
+      applyTheme(theme);
       renderEducationMedia(profile);
     }
     if (set.has("header") || all) updateHeader(profile);
@@ -134,6 +134,10 @@ function updateHero(profile) {
 }
 
 function updateAbout(profile, education, about) {
+  setEditableText("profileName", profile.name, "profile.name");
+  setEditableText("profileNameEn", profile.nameEn || profile.name, "profile.nameEn");
+  setEditableText("profileRole", profile.role, "profile.role");
+  setEditableText("profileLocation", profile.location, "profile.location");
   setEditableText("aboutText", profile.intro, "profile.intro");
   setEditableText("aboutExtra", profile.aboutExtra, "profile.aboutExtra");
   renderDetailLines("aboutIntroLines", profile.introLines, "introLines", false);
@@ -248,15 +252,18 @@ function updateCertificates(certificates) {
 
 function updateAwards(awards) {
   const items = sortByOrder(awards.items);
-  renderList("awardList", items, (a) =>
-    `<li class="award-item edit-list-item" data-edit-list="awards" data-edit-id="${a.id}">
-      <strong data-edit-field="title">${esc(a.title)}</strong>
-      <span data-edit-field="organization">${esc(a.organization || "")}</span>
-      <time data-edit-field="date">${esc(a.date)}</time>
-      <p data-edit-field="description">${esc(a.description || "")}</p>
-      ${a.proofUrl ? `<a href="${esc(a.proofUrl)}" target="_blank" rel="noopener" class="text-link">증빙</a>` : ""}
-    </li>`
-  );
+  renderList("awardList", items, renderAwardItem);
+  renderList("profileAwardList", items, renderAwardItem);
+}
+
+function renderAwardItem(award) {
+  return `<li class="award-item edit-list-item" data-edit-list="awards" data-edit-id="${award.id}">
+    <strong data-edit-field="title">${esc(award.title)}</strong>
+    <span data-edit-field="organization">${esc(award.organization || "")}</span>
+    <time data-edit-field="date">${esc(award.date)}</time>
+    <p data-edit-field="description">${esc(award.description || "")}</p>
+    ${award.proofUrl ? `<a href="${esc(award.proofUrl)}" target="_blank" rel="noopener" class="text-link">증빙</a>` : ""}
+  </li>`;
 }
 
 function updateEducation(education, profile) {
@@ -275,6 +282,7 @@ function updateProjects(projects) {
 function updateExperience(experience) {
   const activities = sortByOrder(experience.items).filter((i) => i.category === "activity");
   renderList("activityGrid", activities, renderActivityCard);
+  renderList("profileActivityGrid", activities, renderActivityCard);
 }
 
 function updateContact(profile) {
@@ -616,7 +624,8 @@ function renderProjectCard(p) {
     ? `style="background-image:url('${esc(thumbUrl)}');background-size:cover;background-position:center"`
     : "";
   const tags = (p.tags || []).map((t, i) => `<span class="project-tag" data-edit-tag-index="${i}">${esc(t)}</span>`).join("");
-  const screenshots = (p.screenshots || p.images || []).map((url, i) =>
+  const projectImages = p.screenshots?.length ? p.screenshots : (p.images || []);
+  const screenshots = projectImages.map((url, i) =>
     `<img class="project-screenshot edit-only" src="${esc(CMS.getImagePreviewUrl(url))}" data-screenshot-index="${i}" data-edit-image="screenshots" alt="">`
   ).join("");
   const hiddenBadge = p.hidden ? `<span class="edit-hidden-badge">숨김</span>` : "";
@@ -634,7 +643,7 @@ function renderProjectCard(p) {
       <div class="project-card__meta">
         <h3 data-edit-field="title">${esc(p.title)}</h3>
         ${statusLabel}
-        <button type="button" class="project-card__detail" aria-label="${esc(p.title)} 상세보기">↗</button>
+        <span class="project-card__detail" aria-hidden="true">↗</span>
       </div>
       <time data-edit-field="period">${esc(p.period)}</time>
       <small data-edit-field="type">${esc(p.type)}</small>
@@ -695,9 +704,10 @@ function renderContact(profile) {
     .filter(([, , val]) => isEdit || val)
     .map(([dt, field, val]) => {
       const text = val ? esc(val) : "";
+      const href = dt === "E-MAIL" ? `mailto:${val}` : dt === "PHONE" ? `tel:${val}` : val;
       const ddInner = isEdit
         ? `<span class="contact-link-field" data-edit-field="${field}" data-placeholder="https://...">${text}</span>`
-        : (val ? `<a href="${esc(val)}"${linkTargetAttrs(val)}>${esc(contactLinkText(dt, val))}</a>` : "");
+        : (val ? `<a href="${esc(href)}"${linkTargetAttrs(val)}>${esc(contactLinkText(dt, val))}</a>` : "");
       return `<div class="contact-field">
         <dt>${dt}</dt>
         <dd>${ddInner}</dd>
@@ -729,6 +739,45 @@ function initStaticInteractions() {
 
   const header = document.getElementById("header");
   if (document.getElementById("navMobile")) CMSNav?.init?.();
+
+  const profileModal = document.getElementById("about");
+  const portfolioModal = document.getElementById("portfolio-book");
+  const syncProfileModal = () => {
+    const isProfileOpen = location.hash === "#about";
+    const isPortfolioOpen = location.hash === "#portfolio-book";
+    document.body.classList.toggle("profile-open", isProfileOpen);
+    document.body.classList.toggle("portfolio-open", isPortfolioOpen);
+    const activeHash = isProfileOpen || isPortfolioOpen ? "#about" : "#projects";
+    document.querySelectorAll('.landing-nav a[href="#projects"], .profile-header-link').forEach((link) => {
+      link.classList.toggle("is-active", link.getAttribute("href") === activeHash);
+    });
+    if (isProfileOpen) {
+      if (profileModal) profileModal.scrollTop = 0;
+      profileModal?.querySelector(".profile-modal")?.focus({ preventScroll: true });
+    }
+    if (isPortfolioOpen) {
+      if (portfolioModal) portfolioModal.scrollTop = 0;
+      portfolioModal?.focus({ preventScroll: true });
+    }
+  };
+  document.querySelector(".profile-header-link")?.addEventListener("click", (e) => {
+    if (location.hash === "#about") {
+      e.preventDefault();
+      location.hash = "#projects";
+    } else if (location.hash === "#portfolio-book") {
+      e.preventDefault();
+      location.hash = "#about";
+    }
+  });
+  window.addEventListener("hashchange", syncProfileModal);
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && location.hash === "#portfolio-book") {
+      location.hash = "#about";
+    } else if (e.key === "Escape" && location.hash === "#about") {
+      location.hash = "#projects";
+    }
+  });
+  syncProfileModal();
 
   window.addEventListener("scroll", () => {
     header?.classList.toggle("is-scrolled", window.scrollY > 40);
